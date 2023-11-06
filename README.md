@@ -1,5 +1,11 @@
 # BP Test
 
+## Requerimientos
+- Android studio
+- variable de entorno ANDROID HOME o configurar el archivo local.properties con la ruta al sdk (sdk.dir)
+- XCode (for ios)
+- emulador configurado o un dispositivo con depuración USB habilitada
+
 ## Paso 1: Descarga los complementos
 
 Antes de ejecutar la app se deben instalar las dependencias de terceros.
