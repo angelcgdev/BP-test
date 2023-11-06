@@ -1,46 +1,9 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { it, describe, expect } from '@jest/globals';
-import { useFinancialProducts } from '../../../../src/modules/financial_products/aplication/useFinantialProducts';
-import { FinancialProductsRepository } from '../../../../src/modules/financial_products/domain/repositories/financialProductsRepository';
-import { FinancialProduct } from '../../../../src/modules/financial_products/domain/entities/financialProduct';
-import { FinancialProductsByQueryRequest } from '../../../../src/modules/financial_products/domain/requests/finantialProductsByQueyRequest';
-import { financialProducts } from '../../../../src/modules/financial_products/infraestructure/datasources/local/db';
-
-class successMockProductsRepositoryImpl implements FinancialProductsRepository {
-    async getAll(): Promise<FinancialProduct[]> {
-        return financialProducts;
-    }
-    async getBy(props: FinancialProductsByQueryRequest): Promise<FinancialProduct[]> {
-        return [financialProducts[0]];
-    }
-
-    add(): Promise<FinancialProduct> {
-        throw new Error('Method not implemented.');
-    }
-    update(): Promise<FinancialProduct> {
-        throw new Error('Method not implemented.');
-    }
-    delete(): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-}
-class errorMockProductsRepositoryImpl implements FinancialProductsRepository {
-    getAll(): Promise<FinancialProduct[]> {
-        throw new Error('Method not implemented.');
-    }
-    getBy(props: FinancialProductsByQueryRequest): Promise<FinancialProduct[]> {
-        throw new Error('Method not implemented.');
-    }
-    add(): Promise<FinancialProduct> {
-        throw new Error('Method not implemented.');
-    }
-    update(): Promise<FinancialProduct> {
-        throw new Error('Method not implemented.');
-    }
-    delete(): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-}
+import { useFinancialProducts } from '../../../../../src/modules/financial_products/aplication/useFinantialProducts';
+import { financialProducts } from '../../../../../src/modules/financial_products/infraestructure/datasources/local/db';
+import { errorMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/errorMockProductsRepositoryImp';
+import { successMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/successMockProductsRepositoryImpl';
 
 describe('useFinancialProducts', () => {
     it('debe inicializar el estado correctamente', () => {

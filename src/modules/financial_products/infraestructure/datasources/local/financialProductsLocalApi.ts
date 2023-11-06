@@ -32,7 +32,16 @@ export class FinancialProductsLocalApi {
             return false;
         });
     }
-    async create(data: FinantialProductCreateRequest) { }
-    async updated(data: FinantialProductUpdateRequest) { }
-    async delete(id: string) { }
+    async create(data: FinantialProductCreateRequest): Promise<FinancialProduct> {
+        await delay(1000);
+        return data;
+    }
+    async updated(data: FinantialProductUpdateRequest): Promise<FinancialProduct> {
+        await delay(1000);
+        return data;
+    }
+    async delete(id: string) {
+        await delay(1000);
+        return;
+    }
 }

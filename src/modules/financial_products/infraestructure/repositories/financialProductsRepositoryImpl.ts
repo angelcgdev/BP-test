@@ -5,17 +5,15 @@ import { FinancialProductsLocalApi } from "../datasources/local/financialProduct
 
 export class FinancialProductsRepositoryImpl implements FinancialProductsRepository {
     private productsApi = new FinancialProductsLocalApi();
-    // get(): Promise<FinancialProduct> {
-    //     return this.productsApi.getByQuery(props.query);
-    // }
-    add(): Promise<FinancialProduct> {
-        throw new Error("Method not implemented.");
+
+    add(product: FinancialProduct): Promise<FinancialProduct> {
+        return this.productsApi.create(product);
     }
-    update(): Promise<FinancialProduct> {
-        throw new Error("Method not implemented.");
+    update(product: FinancialProduct): Promise<FinancialProduct> {
+        return this.productsApi.updated(product);
     }
-    delete(): Promise<void> {
-        throw new Error("Method not implemented.");
+    delete(id: string): Promise<void> {
+        return this.productsApi.delete(id);
     }
     getAll(): Promise<FinancialProduct[]> {
         return this.productsApi.getAll();

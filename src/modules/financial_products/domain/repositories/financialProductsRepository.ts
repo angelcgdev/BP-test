@@ -5,7 +5,7 @@ export abstract class FinancialProductsRepository {
     abstract getAll(): Promise<FinancialProduct[]>;
     abstract getBy(props: FinancialProductsByQueryRequest): Promise<FinancialProduct[]>;
     // abstract get(): Promise<FinancialProduct>;
-    abstract add(): Promise<FinancialProduct>;
-    abstract update(): Promise<FinancialProduct>;
-    abstract delete(): Promise<void>;
+    abstract add(product: FinancialProduct): Promise<FinancialProduct>;
+    abstract update(product: FinancialProduct): Promise<FinancialProduct>;
+    abstract delete(id: string): Promise<void>;
 }

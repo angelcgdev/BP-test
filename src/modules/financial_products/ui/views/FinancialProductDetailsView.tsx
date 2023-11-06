@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { StyleSheet, Text, View, Image } from 'react-native'
-import { BPHeader } from '../components/BPHeader'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { DangerButton, SecondaryButton } from '../../../common/components/Button'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
