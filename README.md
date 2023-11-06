@@ -38,7 +38,7 @@ ubicate en la raiz del proyecto y ejecuta lo siguientes comandos.
 
 ```bash
 # using npm
-npm run testˇ
+npm run test
 ```
 
 
