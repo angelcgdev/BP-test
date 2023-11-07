@@ -6,7 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from '../../../common/components/ThemeProvider';
 import { FinanctialProductsContext } from './FinancialProductsProvider';
 import { FinancialProductsItem } from './FinancialProductItem';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 type ProfileScreenNavigationProp = Props['navigation'];

@@ -7,7 +7,7 @@ import { RootStackParamList } from '../../../../../App'
 import { ThemeContext } from '../../../common/components/ThemeProvider'
 
 type FinancialProductDetailsViewProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
-export const FinancialProductDetailsView = ({ route }: FinancialProductDetailsViewProps) => {
+export const FinancialProductDetailsView = ({ navigation, route }: FinancialProductDetailsViewProps) => {
 
     const { product } = route.params;
     const { padding, gap } = useContext(ThemeContext);

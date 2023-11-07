@@ -1,25 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateFinancialProductForm, financialProductFormEmpty } from "../ui/views/models/createFinancialProductForm";
 import { CreateFinancialProductFormErrors, financialProductFormErrorsEmpty } from "../ui/views/models/createFinancialProductFormErrors";
 import { FinancialProductsRepository } from "../domain/repositories/financialProductsRepository";
 
-type CreateFinantialProductStatus = 'inital' | 'loading' | 'successfully' | 'failure';
+type CreateFinantialProductStatus = 'initial' | 'loading' | 'successfully' | 'failure';
 export interface useFinantialProductCreateProps {
     productRepository: FinancialProductsRepository,
 }
 export const useFinantialProductCreate = ({ productRepository }: useFinantialProductCreateProps) => {
 
-    const [form, setForm] = useState(financialProductFormEmpty);
-    const [errors, setErrors] = useState(financialProductFormErrorsEmpty);
-    const [createStatus, setCreateStatus] = useState<CreateFinantialProductStatus>('inital');
+    const [form, setForm] = useState<CreateFinancialProductForm>(financialProductFormEmpty);
+    const [errors, setErrors] = useState<CreateFinancialProductFormErrors>(financialProductFormErrorsEmpty);
+    const [createStatus, setCreateStatus] = useState<CreateFinantialProductStatus>('initial');
     const handleChange = (key: keyof CreateFinancialProductForm, value: string | Date) => {
         if (key === 'date_release') {
             const valueConverted = value as Date;
-            const dateRevision = valueConverted;
-            dateRevision.setFullYear(dateRevision.getFullYear() + 1)
-            return setForm((form) => ({ ...form, [key]: valueConverted, date_revision: dateRevision }));
+            let dateRevision = new Date(valueConverted);
+            dateRevision.setUTCFullYear(dateRevision.getUTCFullYear() + 1)
+            setForm((form) => ({ ...form, [key]: valueConverted, date_revision: dateRevision }));
+        } else {
+            setForm((form) => ({ ...form, [key]: value }));
         }
-        setForm((form) => ({ ...form, [key]: value }));
     }
 
     const handleResetform = () => {
@@ -27,7 +28,6 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
     }
     const getErrors = (): CreateFinancialProductFormErrors => {
         let newErrors = { ...financialProductFormErrorsEmpty };
-        console.log("errors default", newErrors)
         Array.from(Object.keys(form)).forEach((key) => {
             switch (key) {
                 case 'id':
@@ -63,23 +63,32 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
                     }
                     break;
                 case 'date_release':
-                    const minStart = new Date();
-                    minStart.setUTCHours(0, 0, 0, 0);
-                    const startTime = minStart.getTime();
+                    const today = new Date();
+                    today.setUTCHours(0, 0, 0, 0);
+                    const todayTome = today.getTime();
                     const dateReleaseTime = form['date_release'].getTime();
-                    if (dateReleaseTime < startTime) {
+                    if (dateReleaseTime <= todayTome) {
                         newErrors['date_release'] = "Fecha liberación no válida!";
                     }
                     break;
                 case 'date_revision':
+                    const dateRelease = new Date(form['date_release']);
+                    dateRelease.setUTCHours(0, 0, 0, 0);
+                    const dateRevision = new Date(form['date_revision']);
+                    dateRevision.setUTCHours(0, 0, 0, 0);
+                    const oneYearAfterRelease = new Date(dateRelease);
+                    oneYearAfterRelease.setFullYear(oneYearAfterRelease.getUTCFullYear() + 1);
 
+                    if (dateRevision.getTime() !== oneYearAfterRelease.getTime()) {
+                        newErrors['date_revision'] = "Fecha revisión no válida!";
+                    }
                     break;
             }
         });
         return newErrors;
     }
 
-    const haveErrors = (errors: CreateFinancialProductFormErrors) => {
+    const haveErrors = (errors: CreateFinancialProductFormErrors): boolean => {
         return Array.from(Object.entries(errors)).every((entry) => entry[0] !== '');
     }
 
@@ -102,6 +111,10 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
         }
 
     }
+
+    useEffect(() => {
+        handleChange('date_release', new Date())
+    }, [])
 
     return {
         actions: {

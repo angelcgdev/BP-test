@@ -75,7 +75,6 @@ export const useFinancialProducts = ({ producstRepository, autoLoadProducts = tr
     }
 
     const search = async (query: string) => {
-        console.log('search===>')
         dispatch({ type: 'updateProductsStatus', payload: { status: "loading" }, },);
         try {
             const products = await productsRepository.getBy({ query });

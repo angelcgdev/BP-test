@@ -9,13 +9,14 @@ export interface BPDateInputProps {
   value?: Date,
   placeholderTextColor?: ColorValue,
   error?: string
+  readonly?: boolean
 }
-export const BPDateInput = ({ error, ...props }: BPDateInputProps) => {
+export const BPDateInput = ({ error, readonly = false, ...props }: BPDateInputProps) => {
   const { colors } = useContext(ThemeContext);
   const [date, setDate] = useState(new Date())
   const [open, setOpen] = useState(false)
   return (
-    <TouchableNativeFeedback onPress={() => { setOpen(true) }}>
+    <TouchableNativeFeedback onPress={readonly ? undefined : () => { setOpen(true) }}>
       <View>
         <View pointerEvents='none'>
           <BPTextInput
@@ -23,6 +24,7 @@ export const BPDateInput = ({ error, ...props }: BPDateInputProps) => {
             selectionColor={colors.seconday}
             error={error}
             placeholderTextColor={props.placeholderTextColor ?? colors.onBackground}
+            style={readonly && { backgroundColor: colors.surface }}
           />
 
         </View>

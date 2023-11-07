@@ -17,7 +17,7 @@ export const BPTextInput = ({ error = '', ...props }: BPTextInputProps) => {
         {...props}
         selectionColor={colors.seconday}
         placeholderTextColor={props.placeholderTextColor ?? colors.onBackground}
-        style={[styles.input, { borderColor: borderColor }]}
+        style={[styles.input, { borderColor: borderColor }, props.style]}
         onFocus={() => setFocusMode('focus')}
         onBlur={() => setFocusMode('unfocus')}
       />

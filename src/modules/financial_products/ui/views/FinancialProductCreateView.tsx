@@ -11,13 +11,13 @@ import { FinancialProductsRepositoryImpl } from '../../infraestructure/repositor
 
 export const FinancialProductCreateView = () => {
     const { padding, gap } = useContext(ThemeContext);
-    const { actions, state } = useFinantialProductCreate({productRepository: new FinancialProductsRepositoryImpl()});
+    const { actions, state } = useFinantialProductCreate({ productRepository: new FinancialProductsRepositoryImpl() });
     return (
         <SafeAreaView edges={['bottom']} style={styles.container}>
             <KeyboardAwareScrollView>
-                <View style={[styles.container, { gap: gap.md }]}>
+                <View style={[styles.container, { gap: gap.md, paddingBottom: padding.sm }]}>
                     <ScrollView
-                        style={{ paddingHorizontal: padding.sm }}
+                        style={{ paddingHorizontal: padding.sm, }}
                     >
                         <Text style={[styles.title, { paddingVertical: padding.md }]}>Formulario de Registro</Text>
                         <View style={[styles.formContainer, { gap: gap.sm }]}>
@@ -26,7 +26,7 @@ export const FinancialProductCreateView = () => {
                             <TextInputWithLabel label='Descripción' onChange={(e) => actions.handleChange('description', e.nativeEvent.text)} value={state.form.description} error={state.errors.description} />
                             <TextInputWithLabel label='Logo' onChange={(e) => actions.handleChange('logo', e.nativeEvent.text)} value={state.form.logo} error={state.errors.logo} />
                             <DateInputWithLabel label='Fecha de Liberación' onChange={(value) => actions.handleChange('date_release', value)} value={state.form.date_release} error={state.errors.date_release} />
-                            <DateInputWithLabel label='Fecha de Revisión' onChange={(value) => actions.handleChange('date_revision', value)} value={state.form.date_revision} error={state.errors.date_revision} />
+                            <DateInputWithLabel label='Fecha de Revisión' onChange={(value) => actions.handleChange('date_revision', value)} value={state.form.date_revision} error={state.errors.date_revision} readonly />
                         </View>
                     </ScrollView>
                     <View style={[styles.actionsContainer, { gap: gap.sm, paddingHorizontal: padding.sm }]}>
@@ -34,7 +34,6 @@ export const FinancialProductCreateView = () => {
                         <SecondaryButton title='Reiniciar' onPress={actions.handleResetform} />
                     </View>
                 </View>
-
             </KeyboardAwareScrollView>
         </SafeAreaView>
     )
