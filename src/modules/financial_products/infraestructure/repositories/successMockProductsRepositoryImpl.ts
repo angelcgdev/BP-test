@@ -4,6 +4,7 @@ import { FinancialProductsByQueryRequest } from "../datasources/requests/finanti
 import { financialProducts } from "../datasources/local/db";
 
 export class successMockProductsRepositoryImpl implements FinancialProductsRepository {
+
     async add(product: FinancialProduct): Promise<FinancialProduct> {
         return product;
     }
@@ -18,5 +19,8 @@ export class successMockProductsRepositoryImpl implements FinancialProductsRepos
     }
     async getBy(props: FinancialProductsByQueryRequest): Promise<FinancialProduct[]> {
         return [financialProducts[0]];
+    }
+    async verify(id: string): Promise<boolean> {
+        return false;
     }
 }

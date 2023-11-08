@@ -1,6 +1,7 @@
-import { FinancialProduct } from "../../../domain/entities/financialProduct";
+import { financialProductForApiFromFinancialProduct } from "../../../domain/entities/financialProduct";
 import { FinantialProductCreateRequest } from "../requests/finantialProductCreateRequest";
 import { FinantialProductUpdateRequest } from "../requests/finantialProductUpdateRequest";
+import { FinantialProductDeleteResponse, FinantialProductGetResponse, FinantialProductPostResponse, FinantialProductPutResponse } from "../responses/FinancialProductsResponseApi";
 import { financialProducts } from "./db";
 
 function delay(ms: number): Promise<void> {
@@ -13,11 +14,11 @@ function delay(ms: number): Promise<void> {
 }
 
 export class FinancialProductsLocalApi {
-    async getAll(): Promise<FinancialProduct[]> {
+    async getAll(): Promise<FinantialProductGetResponse> {
         await delay(2000);
-        return financialProducts;
+        return financialProducts.map(product => financialProductForApiFromFinancialProduct(product));
     }
-    async getByQuery(query: string): Promise<FinancialProduct[]> {
+    async getByQuery(query: string): Promise<FinantialProductGetResponse> {
         await delay(2000);
         const queryNormalized = query.toLowerCase();
         return financialProducts.filter((product) => {
@@ -30,18 +31,24 @@ export class FinancialProductsLocalApi {
                 return true;
             }
             return false;
-        });
+        }).map(product => financialProductForApiFromFinancialProduct(product));
     }
-    async create(data: FinantialProductCreateRequest): Promise<FinancialProduct> {
+    async create(data: FinantialProductCreateRequest): Promise<FinantialProductPostResponse> {
         await delay(1000);
         return data;
     }
-    async updated(data: FinantialProductUpdateRequest): Promise<FinancialProduct> {
+    async updated(data: FinantialProductUpdateRequest): Promise<FinantialProductPutResponse> {
         await delay(1000);
         return data;
     }
-    async delete(id: string) {
+    async delete(id: string): Promise<FinantialProductDeleteResponse> {
         await delay(1000);
         return;
+    }
+
+    async verify(id: string): Promise<boolean>{
+        await delay(1000);
+        return false;
+
     }
 }

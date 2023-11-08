@@ -93,6 +93,7 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
     }
 
     const handleSubmit = async () => {
+        console.log("handleSubmit===>")
         const errors = getErrors();
         setErrors(errors);
         if (!haveErrors(errors)) {
@@ -104,9 +105,16 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
     const createProduct = async () => {
         try {
             setCreateStatus('loading')
+            const idAlreadyRegistered = await productRepository.verify(form.id);
+            if (idAlreadyRegistered) {
+                setErrors({ ...errors, id: 'ID ya existe!' });
+                setCreateStatus('initial');
+                return;
+            }
             await productRepository.add(form);
             setCreateStatus('successfully');
         } catch (error) {
+            console.log("createProduct error", error)
             setCreateStatus('failure');
         }
 

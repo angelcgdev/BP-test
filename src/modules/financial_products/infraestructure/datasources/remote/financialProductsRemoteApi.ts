@@ -4,7 +4,7 @@ import { DeleteProductException as DeleteProductInvalidIdException } from "../ex
 import { UpdateProductInvalidFieldsException } from "../expections/updateProductExpeption";
 import { FinantialProductCreateRequest } from "../requests/finantialProductCreateRequest";
 import { FinantialProductUpdateRequest } from "../requests/finantialProductUpdateRequest";
-import { FinantialProductDeleteResponse, FinantialProductGetResponse, FinantialProductPostResponse } from "../responses/FinancialProductsResponseApi";
+import { FinantialProductDeleteResponse, FinantialProductGetResponse, FinantialProductPostResponse, FinantialProductPutResponse } from "../responses/FinancialProductsResponseApi";
 
 export class FinancialProductsRemoteApi {
 
@@ -28,17 +28,19 @@ export class FinancialProductsRemoteApi {
         this.cache = result;
         return result;
     }
-    async getByQuery(query: string): Promise<FinancialProduct[]> {
-        const response = await fetch(
-            `${this.baseUrl}${this.path}`,
-            {
-                method: 'GET',
-                headers: {
-                    authorId: this.authorId,
-                }
-            },
-        );
-        return []
+    async getByQuery(query: string): Promise<FinantialProductGetResponse> {
+        const queryNormalized = query.toLowerCase();
+        return this.cache.filter((product) => {
+            if (product.id.toLocaleLowerCase().includes(queryNormalized)) {
+                return true;
+            } if (product.name.toLocaleLowerCase().includes(queryNormalized)) {
+                return true;
+            }
+            if (product.description.toLocaleLowerCase().includes(queryNormalized)) {
+                return true;
+            }
+            return false;
+        });
     }
     async create(data: FinantialProductCreateRequest): Promise<FinantialProductPostResponse> {
         const response = await fetch(
@@ -58,7 +60,7 @@ export class FinancialProductsRemoteApi {
         }
         return await response.json();
     }
-    async update(data: FinantialProductUpdateRequest): Promise<FinancialProduct> {
+    async update(data: FinantialProductUpdateRequest): Promise<FinantialProductPutResponse> {
         const response = await fetch(
             `${this.baseUrl}${this.path}`,
             {
@@ -90,6 +92,20 @@ export class FinancialProductsRemoteApi {
             throw new DeleteProductInvalidIdException();
         }
         await response.json();
-        // return void;
+    }
+
+    async verify(id: string): Promise<boolean>{
+        console.log("verify ===>")
+        const response = await fetch(
+            `${this.baseUrl}${this.path}/verification?id=${id}`,
+            {
+                method: 'GET',
+                headers: {
+                    authorId: this.authorId,
+                },
+            },
+        );
+        return await response.json();
+
     }
 }

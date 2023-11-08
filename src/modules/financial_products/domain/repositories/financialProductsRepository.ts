@@ -7,4 +7,5 @@ export abstract class FinancialProductsRepository {
     abstract add(product: FinancialProduct): Promise<FinancialProduct>;
     abstract update(product: FinancialProduct): Promise<FinancialProduct>;
     abstract delete(id: string): Promise<void>;
+    abstract verify(id: string): Promise<boolean>;
 }
