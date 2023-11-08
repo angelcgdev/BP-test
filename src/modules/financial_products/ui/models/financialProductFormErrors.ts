@@ -1,4 +1,4 @@
-export interface CreateFinancialProductFormErrors {
+export interface FinancialProductFormErrors {
     id: string;
     name: string;
     description: string;
@@ -7,7 +7,7 @@ export interface CreateFinancialProductFormErrors {
     date_revision: string;
 }
 
-export const financialProductFormErrorsEmpty: CreateFinancialProductFormErrors = {
+export const financialProductFormErrorsEmpty: FinancialProductFormErrors = {
     id: '',
     name: '',
     description: '',

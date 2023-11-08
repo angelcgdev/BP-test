@@ -1,4 +1,6 @@
-export interface CreateFinancialProductForm {
+import { financialProductDefaultDate } from "../../../common/constants/defaultDate";
+
+export interface FinancialProductForm {
     id: string;
     name: string;
     description: string;
@@ -7,9 +9,8 @@ export interface CreateFinancialProductForm {
     date_revision: Date;
 }
 
-const financialProductDefaultDate = new Date(Date.UTC(0));
 
-export const financialProductFormEmpty: CreateFinancialProductForm = {
+export const financialProductFormEmpty: FinancialProductForm = {
     id: '',
     name: '',
     description: '',
@@ -17,3 +18,5 @@ export const financialProductFormEmpty: CreateFinancialProductForm = {
     date_release: financialProductDefaultDate,
     date_revision: financialProductDefaultDate,
 }
+
+export type FinancialProductFormKeys = keyof FinancialProductForm;

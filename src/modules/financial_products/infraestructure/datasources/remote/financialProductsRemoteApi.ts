@@ -1,24 +1,32 @@
-import { FinancialProduct } from "../../../domain/entities/financialProduct";
-import { FinantialProductCreateRequest } from "../../../domain/requests/finantialProductCreateRequest";
-import { FinantialProductUpdateRequest } from "../../../domain/requests/finantialProductUpdateRequest";
-
+import { FinancialProduct, FinancialProductFromApi } from "../../../domain/entities/financialProduct";
+import { CreateProductInvalidFieldsException } from "../expections/createProductException";
+import { DeleteProductException as DeleteProductInvalidIdException } from "../expections/deleteProductException";
+import { UpdateProductInvalidFieldsException } from "../expections/updateProductExpeption";
+import { FinantialProductCreateRequest } from "../requests/finantialProductCreateRequest";
+import { FinantialProductUpdateRequest } from "../requests/finantialProductUpdateRequest";
+import { FinantialProductDeleteResponse, FinantialProductGetResponse, FinantialProductPostResponse } from "../responses/FinancialProductsResponseApi";
 
 export class FinancialProductsRemoteApi {
 
     baseUrl = 'https://tribu-ti-staffing-desarrollo-afangwbmcrhucqfh.z01.azurefd.net/ipf-msa-productosfinancieros';
     path = '/bp/products';
-    autorId = '';
-    async getAll(): Promise<FinancialProduct[]> {
+    authorId = "1232132";
+
+    private cache: FinantialProductGetResponse = [];
+    async getAll(): Promise<FinantialProductGetResponse> {
         const response = await fetch(
             `${this.baseUrl}${this.path}`,
             {
                 method: 'GET',
                 headers: {
-                    autorId: this.autorId,
+                    authorId: this.authorId,
                 }
             },
         );
-        return []
+        const json = await response.json();
+        const result = Array.from<FinancialProductFromApi>(json);
+        this.cache = result;
+        return result;
     }
     async getByQuery(query: string): Promise<FinancialProduct[]> {
         const response = await fetch(
@@ -26,46 +34,62 @@ export class FinancialProductsRemoteApi {
             {
                 method: 'GET',
                 headers: {
-                    autorId: this.autorId,
+                    authorId: this.authorId,
                 }
             },
         );
         return []
     }
-    async create(data: FinantialProductCreateRequest) {
+    async create(data: FinantialProductCreateRequest): Promise<FinantialProductPostResponse> {
         const response = await fetch(
             `${this.baseUrl}${this.path}`,
             {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    autorId: this.autorId,
-                }
+                    authorId: this.authorId,
+                },
+                body: JSON.stringify(data)
             },
         );
+        if (response.status === 206) {
+            const json = await response.json();
+            throw CreateProductInvalidFieldsException.fromJson(json);
+        }
+        return await response.json();
     }
-    async updated(data: FinantialProductUpdateRequest) {
+    async update(data: FinantialProductUpdateRequest): Promise<FinancialProduct> {
         const response = await fetch(
             `${this.baseUrl}${this.path}`,
             {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
-                    autorId: this.autorId,
-                }
+                    authorId: this.authorId,
+                },
+                body: JSON.stringify(data)
             },
         );
-
+        if (response.status === 206) {
+            const json = await response.json();
+            throw UpdateProductInvalidFieldsException.fromJson(json);
+        }
+        return await response.json();
     }
-    async delete(id: string) {
+    async delete(id: string): Promise<FinantialProductDeleteResponse> {
         const response = await fetch(
-            `${this.baseUrl}${this.path}`,
+            `${this.baseUrl}${this.path}?id=${id}`,
             {
                 method: 'DELETE',
                 headers: {
-                    autorId: this.autorId,
-                }
+                    authorId: this.authorId,
+                },
             },
         );
+        if (response.status === 404) {
+            throw new DeleteProductInvalidIdException();
+        }
+        await response.json();
+        // return void;
     }
 }

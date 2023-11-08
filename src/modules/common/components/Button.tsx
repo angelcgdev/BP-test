@@ -1,42 +1,53 @@
-import { useContext } from "react";
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
-import { ThemeContext } from "./ThemeProvider";
+import { useBPTheme } from "./ThemeProvider";
 
-interface BaseButtonProps {
+interface BPBaseButtonProps {
     onPress?: () => void;
     disabled?: boolean,
     title: string,
     loading?: boolean,
 }
-export function PrimaryButton(props: BaseButtonProps) {
 
-    const { colors, padding } = useContext(ThemeContext);
+
+interface BaseButtonProps extends BPBaseButtonProps {
+    backgroundColor: string,
+    color: string,
+}
+
+function BaseButton(props: BaseButtonProps) {
+    const { padding } = useBPTheme();
     return (
-        <TouchableNativeFeedback onPress={props.onPress}>
-            <View style={[styles.container, { backgroundColor: colors.primary, padding: padding.sm }]}>
-                <Text style={[styles.title, { color: colors.onPrimary }]}>{props.title}</Text>
-            </View>
-        </TouchableNativeFeedback>
+        <View style={{ borderRadius: 8, overflow: 'hidden' }}>
+            <TouchableNativeFeedback onPress={props.onPress} >
+                <View style={[styles.container, { backgroundColor: props.backgroundColor, padding: padding.sm }]}>
+                    {
+                        props.loading
+                            ? <Text style={[styles.title, { color: props.color }]}>Cargando...</Text>
+                            : <Text style={[styles.title, { color: props.color }]}>{props.title}</Text>
+                    }
+                </View>
+            </TouchableNativeFeedback>
+
+        </View>
     )
 }
-export function SecondaryButton(props: BaseButtonProps) {
-    const { colors, padding } = useContext(ThemeContext);
+export function PrimaryButton(props: BPBaseButtonProps) {
+
+    const { colors } = useBPTheme();
     return (
-        <TouchableNativeFeedback onPress={props.onPress}>
-            <View style={[styles.container, { backgroundColor: colors.surface, padding: padding.sm }]}>
-                <Text style={[styles.title, { color: colors.onSurface }]}>{props.title}</Text>
-            </View>
-        </TouchableNativeFeedback>
+        <BaseButton {...props} backgroundColor={colors.primary} color={colors.onPrimary} />
     )
 }
-export function DangerButton(props: BaseButtonProps) {
-    const { colors, padding } = useContext(ThemeContext);
+export function SecondaryButton(props: BPBaseButtonProps) {
+    const { colors } = useBPTheme();
     return (
-        <TouchableNativeFeedback onPress={props.onPress}>
-            <View style={[styles.container, { backgroundColor: colors.danger, padding: padding.sm }]}>
-                <Text style={[styles.title, { color: colors.onDanger }]}>{props.title}</Text>
-            </View>
-        </TouchableNativeFeedback>
+        <BaseButton {...props} backgroundColor={colors.surface} color={colors.onSurface} />
+    )
+}
+export function DangerButton(props: BPBaseButtonProps) {
+    const { colors } = useBPTheme();
+    return (
+        <BaseButton {...props} backgroundColor={colors.danger} color={colors.onDanger} />
     )
 }
 

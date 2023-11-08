@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { it, describe, expect } from '@jest/globals';
-import { useFinancialProducts } from '../../../../../src/modules/financial_products/aplication/useFinantialProducts';
+import { useFinancialProducts } from '../../../../../src/modules/financial_products/application/useFinantialProducts';
 import { financialProducts } from '../../../../../src/modules/financial_products/infraestructure/datasources/local/db';
 import { errorMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/errorMockProductsRepositoryImp';
 import { successMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/successMockProductsRepositoryImpl';
@@ -8,7 +8,7 @@ import { successMockProductsRepositoryImpl } from '../../../../../src/modules/fi
 describe('useFinancialProducts', () => {
     it('debe inicializar el estado correctamente', () => {
         const successMockProductsRepository = new successMockProductsRepositoryImpl();
-        const { result } = renderHook(() => useFinancialProducts({ producstRepository: successMockProductsRepository, autoLoadProducts: false }));
+        const { result } = renderHook(() => useFinancialProducts({ productRepository: successMockProductsRepository, autoLoadProducts: false }));
 
         expect(result.current.state.products).toEqual([]);
         expect(result.current.state.query).toEqual('');
@@ -17,7 +17,7 @@ describe('useFinancialProducts', () => {
 
     it('debe actualizar el estado cuando se llama a getProducts', async () => {
         const successMockProductsRepository = new successMockProductsRepositoryImpl();
-        const { result } = renderHook(() => useFinancialProducts({ producstRepository: successMockProductsRepository, autoLoadProducts: false }));
+        const { result } = renderHook(() => useFinancialProducts({ productRepository: successMockProductsRepository, autoLoadProducts: false }));
 
         act(() => {
             result.current.actions.getProducts();
@@ -31,7 +31,7 @@ describe('useFinancialProducts', () => {
 
     it('debe manejar errores en getProducts', async () => {
         const errorMockProductsRepository = new errorMockProductsRepositoryImpl();
-        const { result } = renderHook(() => useFinancialProducts({ producstRepository: errorMockProductsRepository, autoLoadProducts: false }));
+        const { result } = renderHook(() => useFinancialProducts({ productRepository: errorMockProductsRepository, autoLoadProducts: false }));
 
         act(() => {
             result.current.actions.getProducts();
@@ -46,7 +46,7 @@ describe('useFinancialProducts', () => {
 
     it('debe actualizar el estado cuando se llama a search', async () => {
         const successMockProductsRepository = new successMockProductsRepositoryImpl();
-        const { result } = renderHook(() => useFinancialProducts({ producstRepository: successMockProductsRepository, autoLoadProducts: false }));
+        const { result } = renderHook(() => useFinancialProducts({ productRepository: successMockProductsRepository, autoLoadProducts: false }));
 
         act(() => {
             result.current.actions.search('credito');

@@ -1,0 +1,1 @@
+export const financialProductDefaultDate = new Date(Date.UTC(0));

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { CreateFinancialProductForm, financialProductFormEmpty } from "../ui/views/models/createFinancialProductForm";
-import { CreateFinancialProductFormErrors, financialProductFormErrorsEmpty } from "../ui/views/models/createFinancialProductFormErrors";
+import { FinancialProductForm, FinancialProductFormKeys, financialProductFormEmpty } from "../ui/models/financialProductForm";
+import { FinancialProductFormErrors, financialProductFormErrorsEmpty } from "../ui/models/financialProductFormErrors";
 import { FinancialProductsRepository } from "../domain/repositories/financialProductsRepository";
 
 type CreateFinantialProductStatus = 'initial' | 'loading' | 'successfully' | 'failure';
@@ -9,10 +9,10 @@ export interface useFinantialProductCreateProps {
 }
 export const useFinantialProductCreate = ({ productRepository }: useFinantialProductCreateProps) => {
 
-    const [form, setForm] = useState<CreateFinancialProductForm>(financialProductFormEmpty);
-    const [errors, setErrors] = useState<CreateFinancialProductFormErrors>(financialProductFormErrorsEmpty);
+    const [form, setForm] = useState<FinancialProductForm>(financialProductFormEmpty);
+    const [errors, setErrors] = useState<FinancialProductFormErrors>(financialProductFormErrorsEmpty);
     const [createStatus, setCreateStatus] = useState<CreateFinantialProductStatus>('initial');
-    const handleChange = (key: keyof CreateFinancialProductForm, value: string | Date) => {
+    const handleChange = (key: FinancialProductFormKeys, value: string | Date) => {
         if (key === 'date_release') {
             const valueConverted = value as Date;
             let dateRevision = new Date(valueConverted);
@@ -26,7 +26,7 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
     const handleResetform = () => {
         setForm(financialProductFormEmpty);
     }
-    const getErrors = (): CreateFinancialProductFormErrors => {
+    const getErrors = (): FinancialProductFormErrors => {
         let newErrors = { ...financialProductFormErrorsEmpty };
         Array.from(Object.keys(form)).forEach((key) => {
             switch (key) {
@@ -88,8 +88,8 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
         return newErrors;
     }
 
-    const haveErrors = (errors: CreateFinancialProductFormErrors): boolean => {
-        return Array.from(Object.entries(errors)).every((entry) => entry[0] !== '');
+    const haveErrors = (errors: FinancialProductFormErrors): boolean => {
+        return Object.values(errors).some((entry: string) => entry !== '');
     }
 
     const handleSubmit = async () => {

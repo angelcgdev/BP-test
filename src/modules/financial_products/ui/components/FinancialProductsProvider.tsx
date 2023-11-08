@@ -1,13 +1,12 @@
-import React, { ReactNode, createContext } from 'react'
-import { FinancialProductsHook, financialProductsHook, useFinancialProducts } from '../../aplication/useFinantialProducts';
-import { FinancialProductsRepositoryImpl } from '../../infraestructure/repositories/financialProductsRepositoryImpl';
+import React, { ReactNode, createContext, useContext } from 'react'
+import { FinancialProductsHook, financialProductsHook, useFinancialProducts } from '../../application/useFinantialProducts';
+import { RepositoryContext } from '../../../common/components/RepositoryProvider';
 
 
 export const FinanctialProductsContext = createContext<FinancialProductsHook>(financialProductsHook);
 export const FinancialProductsProvider = ({ children }: { children: ReactNode }) => {
-    const finalProductsReducer = useFinancialProducts({
-        producstRepository: new FinancialProductsRepositoryImpl(),
-    });
+    const { productRepository } = useContext(RepositoryContext);
+    const finalProductsReducer = useFinancialProducts({ productRepository });
     return (
         <FinanctialProductsContext.Provider value={finalProductsReducer}>
             {children}

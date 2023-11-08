@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { RootStackParamList } from '../../../../../App';
 import { useNavigation } from '@react-navigation/native';
-import { ThemeContext } from '../../../common/components/ThemeProvider';
+import { useBPTheme } from '../../../common/components/ThemeProvider';
 import { FinanctialProductsContext } from './FinancialProductsProvider';
 import { FinancialProductsItem } from './FinancialProductItem';
 import { LogBox } from 'react-native';
@@ -15,9 +15,9 @@ LogBox.ignoreLogs([
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 type ProfileScreenNavigationProp = Props['navigation'];
 export const FinancialProductsList = () => {
-    const { state: { products, productStatus } } = useContext(FinanctialProductsContext);
+    const { state: { products, productStatus }, actions } = useContext(FinanctialProductsContext);
     const navigation = useNavigation<ProfileScreenNavigationProp>();
-    const { colors } = useContext(ThemeContext);
+    const { colors } = useBPTheme();
 
     switch (productStatus.status) {
         case 'initial':
@@ -54,7 +54,10 @@ export const FinancialProductsList = () => {
                                 isFirst={isFirst}
                                 isLast={isLast}
                                 product={item}
-                                onPress={() => { navigation.push('Details', { product: item }); }}
+                                onPress={() => {
+                                    actions.selectProduct(item);
+                                    navigation.push('Details');
+                                }}
                             />
                         )
                     }}

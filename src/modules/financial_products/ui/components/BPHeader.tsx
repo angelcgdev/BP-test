@@ -1,54 +1,61 @@
 import React, { useContext } from 'react'
 import { Image, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { Images } from '../../../../assets'
-import { ThemeContext } from '../../../common/components/ThemeProvider'
+import { useBPTheme } from '../../../common/components/ThemeProvider'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/Feather'
 export const BPHeader = ({ canGoback = false }: { canGoback?: boolean }) => {
-  const { colors } = useContext(ThemeContext);
+  const { colors, padding, gap } = useBPTheme();
 
   const navigation = useNavigation();
   return (
-    <SafeAreaView edges={['right', 'left', 'top']} style={{ backgroundColor: colors.background }}>
-      <View style={[styles.header, { borderColor: colors.border }]}>
-        <View style={styles.leadContent}>
-          {
-            canGoback
-              ? <TouchableWithoutFeedback
-                style={styles.backButton}
-                onPress={() => {
-                  navigation.goBack();
-                }}
-              >
-                <Text>{'<'}</Text>
-              </TouchableWithoutFeedback>
-              : <></>
-          }
+    <View style={{ backgroundColor: colors.background }}>
+      <SafeAreaView edges={['right', 'left', 'top']}>
+        <View style={[styles.header, { borderColor: colors.border, padding: padding.sm, gap: gap.sm, paddingLeft: canGoback ? padding.sm * 0.5 : padding.sm }]}>
+          <View style={styles.leadContent}>
+            {
+              canGoback
+                ? <View style={styles.backButton}>
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      navigation.goBack();
+                    }}
+                  >
+                    <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
+                      <Icon name="chevron-left" size={25} color={colors.border} />
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+
+                : <></>
+            }
+          </View>
+          <View style={[styles.titleContainer, { gap: gap.sm * 0.5 }]}>
+            <Image style={styles.logo} source={Images.logos.BPLogo} />
+            <Text style={[styles.title, { color: colors.seconday }]} >BANCO PICHINCHA</Text>
+          </View>
+          <View style={styles.leadContent} />
         </View>
-        <View style={styles.titleContainer}>
-          <Image style={styles.logo} source={Images.logos.BPLogo} />
-          <Text style={[styles.title, { color: colors.seconday }]} >BANCO PICHINCHA</Text>
-        </View>
-        <View style={styles.leadContent} />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   )
 }
 
 
-const padding = 20;
 const styles = StyleSheet.create({
   header: {
     borderBottomWidth: 1,
-    padding: padding,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: padding * 0.5,
   },
   leadContent: {
     flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-start'
   },
   rightContent: {
     flex: 1,
@@ -59,7 +66,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: padding * 0.5,
   },
   logo: {
     width: 20,
@@ -70,7 +76,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   backButton: {
-    padding: 10,
+    borderRadius: 5,
     height: 40,
     width: 40,
   }

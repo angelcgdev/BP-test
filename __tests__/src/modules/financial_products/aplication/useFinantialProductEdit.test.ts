@@ -1,12 +1,21 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { it, describe, expect } from '@jest/globals';
-import { useFinantialProductCreate } from '../../../../../src/modules/financial_products/application/useFinantialProductCreate';
 import { successMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/successMockProductsRepositoryImpl';
+import { useFinantialProductEdit } from '../../../../../src/modules/financial_products/application/useFinantialProductEdit';
+import { financialProducts } from '../../../../../src/modules/financial_products/infraestructure/datasources/local/db';
+import { errorMockProductsRepositoryImpl } from '../../../../../src/modules/financial_products/infraestructure/repositories/errorMockProductsRepositoryImp';
 
-describe('useFinantialProductCreate', () => {
+describe('useFinantialProductEdit', () => {
+  const productSelected = financialProducts[0];
+
+  it('debe inicializar el estado correctamente', () => {
+    const successMockProductsRepository = new successMockProductsRepositoryImpl();
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
+    expect(result.current.state.form).toBe(productSelected);
+  });
   it('debe validar que el ID tenga de 3 y hasta 10 digitos', async () => {
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
     act(() => {
       result.current.actions.handleChange('id', 'abc');
     });
@@ -55,7 +64,7 @@ describe('useFinantialProductCreate', () => {
 
   it('debe validar que el Nombre tenga de 5 y hasta 100 digitos', async () => {
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
     act(() => {
       result.current.actions.handleChange('name', 'abcde');
     });
@@ -103,7 +112,7 @@ describe('useFinantialProductCreate', () => {
 
   it('debe validar que la Descripción tenga de 10 y hasta 200 digitos', async () => {
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
     act(() => {
       result.current.actions.handleChange('description', 'abcdefghij');
     });
@@ -152,7 +161,7 @@ describe('useFinantialProductCreate', () => {
   it('debe validar que el Logo no este vacio', async () => {
 
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
     act(() => {
       result.current.actions.handleChange('logo', 'a');
     });
@@ -184,7 +193,7 @@ describe('useFinantialProductCreate', () => {
 
   it('debe validar que la fecha de liberación sea mayor o igual a la fecha de hoy', async () => {
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
 
     const today = new Date();
 
@@ -225,7 +234,7 @@ describe('useFinantialProductCreate', () => {
   });
   it('debe validar que la fecha de revición sea un año mayor a la fecha de liberación', async () => {
     const successMockProductsRepository = new successMockProductsRepositoryImpl();
-    const { result } = renderHook(() => useFinantialProductCreate({ productRepository: successMockProductsRepository }));
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: successMockProductsRepository, initialForm: productSelected }));
 
     const today = new Date();
 
@@ -272,4 +281,18 @@ describe('useFinantialProductCreate', () => {
 
   });
 
+  it('debe manejar errores en al actualizar el producto financiero', async () => {
+    const errorMockProductsRepository = new errorMockProductsRepositoryImpl();
+    const { result } = renderHook(() => useFinantialProductEdit({ productRepository: errorMockProductsRepository, initialForm: productSelected }));
+    act(() => {
+      result.current.actions.handleChange('date_release', new Date());
+    });
+    act(() => {
+      result.current.actions.handleSubmit();
+    });
+    await waitFor(() => {
+      expect(result.current.state.updateStatus).toEqual({ status: 'failure', error: 'Error desconocido.' });
+    })
+
+  });
 });

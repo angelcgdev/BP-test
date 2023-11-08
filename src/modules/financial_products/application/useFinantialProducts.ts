@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useReducer } from "react";
-import { FinancialProduct } from "../domain/entities/financialProduct";
+import { FinancialProduct, financialProductEmpty } from "../domain/entities/financialProduct";
 import { FinancialProductsRepository } from "../domain/repositories/financialProductsRepository";
 import { debounce } from "../../../utils/debounce";
+import { financialProductFormErrorsEmpty } from "../ui/models/financialProductFormErrors";
 
 interface UpdateProductsAction {
     type: 'updatedProducts',
@@ -21,11 +22,16 @@ interface ProductsStatusAction {
     type: 'updateProductsStatus',
     payload: ProductsStatusPayload,
 }
+interface SelectProductAction {
+    type: 'selectProduct',
+    payload: FinancialProduct,
+}
 
-type FinancialProductAction = UpdateProductsAction | UpdateQueryAction | ProductsStatusAction;
+type FinancialProductAction = UpdateProductsAction | UpdateQueryAction | ProductsStatusAction | SelectProductAction;
 
 interface FinancialProductsState {
     products: FinancialProduct[],
+    productSelected: FinancialProduct,
     query: string,
     productStatus: ProductsStatusPayload,
 }
@@ -39,28 +45,39 @@ function reducer(state: FinancialProductsState, action: FinancialProductAction):
             return { ...state, query: payload }
         case 'updateProductsStatus':
             return { ...state, productStatus: payload }
+        case 'selectProduct':
+            return { ...state, productSelected: payload }
     }
 }
 const initialState: FinancialProductsState = {
     products: [],
+    productSelected: financialProductEmpty,
     query: '',
     productStatus: { status: 'initial' }
 };
-interface useFinancialProductsProps { producstRepository: FinancialProductsRepository, autoLoadProducts?: boolean }
+interface useFinancialProductsProps { productRepository: FinancialProductsRepository, autoLoadProducts?: boolean }
 export interface FinancialProductsHook {
     actions: {
-        getProducts: () => void;
+        getProducts: () => Promise<void>;
+        selectProduct: (product: FinancialProduct) => void;
         changeQuery: (query: string) => void;
+        search: (query: string) => Promise<void>;
     }
     state: FinancialProductsState;
 }
 
-export const financialProductsHook = {
+export const financialProductsHook: FinancialProductsHook = {
     state: initialState,
+    actions: {
+        changeQuery: () => { },
+        getProducts: async () => { },
+        search: async () => { },
+        selectProduct: () => { },
+    }
 }
-export const useFinancialProducts = ({ producstRepository, autoLoadProducts = true }: useFinancialProductsProps) => {
+export const useFinancialProducts = ({ productRepository, autoLoadProducts = true }: useFinancialProductsProps): FinancialProductsHook => {
     const productsRepository = useMemo(() => {
-        return producstRepository;
+        return productRepository;
     }, [])
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -94,6 +111,10 @@ export const useFinancialProducts = ({ producstRepository, autoLoadProducts = tr
         searchWithDelayMemo(query);
     }
 
+    const selectProduct = (product: FinancialProduct) => {
+        dispatch({ type: 'selectProduct', payload: product });
+    }
+
     useEffect(() => {
         if (autoLoadProducts) {
             getProducts();
@@ -103,6 +124,7 @@ export const useFinancialProducts = ({ producstRepository, autoLoadProducts = tr
     return {
         actions: {
             getProducts,
+            selectProduct,
             changeQuery,
             search,
         },
