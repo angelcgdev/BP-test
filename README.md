@@ -40,7 +40,3 @@ ubicate en la raiz del proyecto y ejecuta lo siguientes comandos.
 # using npm
 npm run test
 ```
-
-
-### Nota
-sin tiempo suciente para completar todos los requerimientos, se incluye F1, F2, F3 y F4 con un abance significativo, tampoco se pudo obtener un authorId debido a ello se trabaja con data local
