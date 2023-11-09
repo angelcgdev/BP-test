@@ -32,7 +32,8 @@ function AppRouter() {
           contentStyle: {
             backgroundColor: colors.background,
           },
-        }}>
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={FinancialProductsView}
