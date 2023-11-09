@@ -3,6 +3,9 @@ import { FinancialProductsRepository } from "../../domain/repositories/financial
 import { FinancialProductsByQueryRequest } from "../datasources/requests/finantialProductsByQueyRequest";
 
 export class errorMockProductsRepositoryImpl implements FinancialProductsRepository {
+    verify(id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     getAll(): Promise<FinancialProduct[]> {
         throw new Error('Method not implemented.');
     }

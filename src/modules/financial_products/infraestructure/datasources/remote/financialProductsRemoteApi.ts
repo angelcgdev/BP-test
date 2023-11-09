@@ -91,11 +91,10 @@ export class FinancialProductsRemoteApi {
         if (response.status === 404) {
             throw new DeleteProductInvalidIdException();
         }
-        await response.json();
+        return;
     }
 
-    async verify(id: string): Promise<boolean>{
-        console.log("verify ===>")
+    async verify(id: string): Promise<boolean> {
         const response = await fetch(
             `${this.baseUrl}${this.path}/verification?id=${id}`,
             {
@@ -105,7 +104,7 @@ export class FinancialProductsRemoteApi {
                 },
             },
         );
-        return await response.json();
-
+        const data = await response.json();
+        return data;
     }
 }

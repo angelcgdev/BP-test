@@ -27,28 +27,33 @@ export const FinancialProductsItem = ({ isFirst, isLast, onPress, product }: Fin
     }
     const { colors } = useBPTheme();
     return (
-        <TouchableNativeFeedback onPress={onPress}>
-            <View style={[styles.financialProductItemContainer, firstBorderStyle, lastBorderStyle, { borderColor: colors.border }]}>
-                <View style={styles.financialProductItemContentContainer}>
-                    <Text style={styles.financialProductItemTitle}>{product.name}</Text>
-                    <Text>ID: {product.id}</Text>
+        <View style={[styles.container, firstBorderStyle, lastBorderStyle, { borderColor: colors.border, }]}>
+            <TouchableNativeFeedback onPress={onPress}>
+                <View style={[styles.financialProductItemContainer]}>
+                    <View style={styles.financialProductItemContentContainer}>
+                        <Text style={styles.financialProductItemTitle}>{product.name}</Text>
+                        <Text>ID: {product.id}</Text>
+                    </View>
+                    <Icon name="chevron-right" size={25} color={colors.border} />
                 </View>
-                <Icon name="chevron-right" size={25} color={colors.border} />
-            </View>
-        </TouchableNativeFeedback>
+            </TouchableNativeFeedback>
+        </View>
     )
 }
 
 
 const styles = StyleSheet.create({
+    container: {
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        overflow: 'hidden',
+    },
     financialProductItemContainer: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         padding: 10,
         justifyContent: 'space-between',
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
     },
     financialProductItemContentContainer: {
         gap: 5,

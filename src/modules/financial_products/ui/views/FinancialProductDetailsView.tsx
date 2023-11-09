@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Text, View, Image, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FinanctialProductsContext } from '../components/FinancialProductsProvider';
@@ -10,15 +10,22 @@ import { RepositoryContext } from '../../../common/components/RepositoryProvider
 import { useSnackbarReponse } from '../../../common/hooks/useSnackbarResponse';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../../App';
+import { useNavigation } from '@react-navigation/native';
 
 type FinancialProductDetailsViewProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 export const FinancialProductDetailsView = ({ navigation }: FinancialProductDetailsViewProps) => {
 
     const { productRepository } = useContext(RepositoryContext);
-    const { state: { productSelected: product } } = useContext(FinanctialProductsContext);
+    const { state: { productSelected: product }, actions: { getProducts } } = useContext(FinanctialProductsContext);
     const { colors, padding, gap } = useBPTheme();
-    const { actions, state } = useFinantialProductDelete({ product, productRepository });
-    useSnackbarReponse({ status: state.deleteStatus, successMessage: 'Producto eliminado con exito!' });
+    const { actions, state } = useFinantialProductDelete({
+        product, productRepository,
+        deleteSuccess: () => {
+            getProducts();
+            navigation.goBack();
+        }
+    });
+    useSnackbarReponse({ status: state.deleteStatus, success: { message: 'Producto eliminado con exito!' } });
     return (
         <SafeAreaView style={styles.container} edges={['bottom']}>
             <View style={[styles.body, { padding: padding.sm, gap: gap.md }]}>
@@ -30,9 +37,7 @@ export const FinancialProductDetailsView = ({ navigation }: FinancialProductDeta
                 <ExtraInfoItem label='Descripción' value={product.description} />
                 <View style={styles.extraInfoItemContainerWithLogo}>
                     <Text style={styles.extraInfoItemLabel}>Logo</Text>
-                    <Image style={styles.extraInfoItemLogo} source={{
-                        uri: product.logo,
-                    }} />
+                    <FinantialProductLogo logo={product.logo} />
                 </View>
                 <ExtraInfoItem label='Fecha liberación' value={product.date_release.toLocaleDateString('es')} />
                 <ExtraInfoItem label='Fecha revisión' value={product.date_revision.toLocaleDateString('es')} />
@@ -65,6 +70,26 @@ export const FinancialProductDetailsView = ({ navigation }: FinancialProductDeta
         </SafeAreaView>
     );
 };
+
+
+export const FinantialProductLogo = ({ logo }: { logo: string }) => {
+
+    const isImagePathValid = /^https?:\/\/.*/.test(logo);
+    const { colors } = useBPTheme();
+    if (!isImagePathValid) {
+        return (
+            <View style={[styles.extraInfoItemLogo, { backgroundColor: colors.surface }]}>
+                <Text style={{ color: colors.onSurface }}>Ocurrio un error</Text>
+            </View>
+        )
+    }
+    return (
+        <Image style={styles.extraInfoItemLogo} source={{
+            uri: logo,
+        }} />
+    )
+}
+
 
 
 
@@ -111,7 +136,9 @@ const styles = StyleSheet.create({
     extraInfoItemLogo: {
         width: '50%',
         aspectRatio: '16/9',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     actionsBody: {
         padding: padding,

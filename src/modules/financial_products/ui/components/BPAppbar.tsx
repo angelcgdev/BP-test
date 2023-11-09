@@ -5,7 +5,7 @@ import { useBPTheme } from '../../../common/components/ThemeProvider'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Feather'
-export const BPHeader = ({ canGoback = false }: { canGoback?: boolean }) => {
+export const BPAppBar = ({ canGoback = false }: { canGoback?: boolean }) => {
   const { colors, padding, gap } = useBPTheme();
 
   const navigation = useNavigation();
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: 70,
   },
   leadContent: {
     flex: 1,

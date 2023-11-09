@@ -10,8 +10,10 @@ interface EditFinantialProductStatus {
 export interface UseFinantialProductEditProps {
     productRepository: FinancialProductsRepository,
     initialForm: FinancialProductForm,
+    editSuccess?: () => void,
+    editFailed?: () => void,
 }
-export const useFinantialProductEdit = ({ productRepository, initialForm }: UseFinantialProductEditProps) => {
+export const useFinantialProductEdit = ({ productRepository, initialForm, editFailed, editSuccess }: UseFinantialProductEditProps) => {
 
     const [form, setForm] = useState<FinancialProductForm>(initialForm);
     const [errors, setErrors] = useState<FinancialProductFormErrors>(financialProductFormErrorsEmpty);
@@ -110,8 +112,14 @@ export const useFinantialProductEdit = ({ productRepository, initialForm }: UseF
             setUpdateStatus({ status: 'loading' })
             await productRepository.update(form);
             setUpdateStatus({ status: 'successfully' });
+            if (editSuccess) {
+                editSuccess();
+            }
         } catch (error) {
             setUpdateStatus({ status: 'failure', error: 'Error desconocido.' });
+            if (editFailed) {
+                editFailed();
+            }
         }
 
     }

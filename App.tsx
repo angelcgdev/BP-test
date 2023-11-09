@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { FinancialProductDetailsView } from './src/modules/financial_products/ui/views/FinancialProductDetailsView';
 import { ThemeContext, ThemeProvider } from './src/modules/common/components/ThemeProvider';
 import { FinancialProductCreateView } from './src/modules/financial_products/ui/views/FinancialProductCreateView';
-import { BPHeader } from './src/modules/financial_products/ui/components/BPHeader';
+import { BPAppBar } from './src/modules/financial_products/ui/components/BPAppbar';
 import { FinancialProductsProvider } from './src/modules/financial_products/ui/components/FinancialProductsProvider';
 import { FinancialProductEditView } from './src/modules/financial_products/ui/views/FinancialProductEditView';
 import { RepositoryProvider } from './src/modules/common/components/RepositoryProvider';
@@ -26,7 +26,13 @@ function AppRouter() {
   const { colors } = useContext(ThemeContext);
   return (
     <NavigationContainer theme={{ ...DefaultTheme, dark: false }}>
-      <Stack.Navigator screenOptions={{ header: () => <BPHeader />, contentStyle: { backgroundColor: colors.background }, statusBarColor: colors.background, statusBarStyle: 'dark' }}>
+      <Stack.Navigator
+        screenOptions={{
+          header: () => <BPAppBar />,
+          contentStyle: {
+            backgroundColor: colors.background,
+          },
+        }}>
         <Stack.Screen
           name="Home"
           component={FinancialProductsView}
@@ -35,21 +41,21 @@ function AppRouter() {
           name="Details"
           component={FinancialProductDetailsView}
           options={{
-            header: () => < BPHeader canGoback />
+            header: () => < BPAppBar canGoback />
           }}
         />
         <Stack.Screen
           name="Create"
           component={FinancialProductCreateView}
           options={{
-            header: () => < BPHeader canGoback />
+            header: () => < BPAppBar canGoback />
           }}
         />
         <Stack.Screen
           name="Edit"
           component={FinancialProductEditView}
           options={{
-            header: () => < BPHeader canGoback />
+            header: () => < BPAppBar canGoback />
           }}
         />
       </Stack.Navigator>

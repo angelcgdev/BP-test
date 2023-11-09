@@ -3,7 +3,11 @@ import { useSnackbar } from "../components/SpackbarProvider";
 import { useBPTheme } from "../components";
 interface useSnackbarReponseProps {
     status: string,
-    successMessage?: string,
+    success?: {
+        message?: string,
+        actionText?: string;
+        onActionPress?: () => void;
+    }
     errorMessage?: string,
 }
 
@@ -13,10 +17,13 @@ export const useSnackbarReponse = (props: useSnackbarReponseProps) => {
     useEffect(() => {
         if (props.status === 'successfully') {
             snackbar.actions.show({
-                message: props.successMessage ?? 'processo exitoso',
-                actionText: 'ok',
+                message: props.success?.message ?? 'processo exitoso',
+                actionText: props.success?.actionText ?? 'ok',
                 onActionPress: () => {
                     snackbar.actions.dismiss();
+                    if (props.success?.onActionPress) {
+                        props.success.onActionPress();
+                    }
                 }
             });
         }
@@ -24,7 +31,8 @@ export const useSnackbarReponse = (props: useSnackbarReponseProps) => {
             snackbar.actions.show({
                 message: props.errorMessage ?? 'ocurrio un error.',
                 backgroundColor: theme.colors.error,
-                textColor: theme.colors.onError
+                textColor: theme.colors.onError,
+                onActionPress: undefined
             });
         }
     }, [props.status])

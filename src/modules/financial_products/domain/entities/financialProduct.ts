@@ -40,6 +40,6 @@ export function financialProductForApiFromFinancialProduct(product: FinancialPro
     return {
         ...rest,
         date_release: date_release.toISOString(),
-        date_revision: date_release.toISOString(),
+        date_revision: date_revision.toISOString(),
     }
 }

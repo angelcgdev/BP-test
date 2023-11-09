@@ -7,13 +7,30 @@ import { useFinantialProductEdit } from '../../application/useFinantialProductEd
 import { FinanctialProductsContext } from '../components/FinancialProductsProvider';
 import { RepositoryContext } from '../../../common/components/RepositoryProvider';
 import { useSnackbarReponse } from '../../../common/hooks/useSnackbarResponse';
+import { useNavigation } from '@react-navigation/native';
 
 
 export const FinancialProductEditView = () => {
+    const navigation = useNavigation();
     const { productRepository } = useContext(RepositoryContext);
-    const { state: { productSelected } } = useContext(FinanctialProductsContext);
-    const { actions, state } = useFinantialProductEdit({ productRepository, initialForm: productSelected });
-    useSnackbarReponse({ status: state.updateStatus.status, successMessage: 'Producto actualizado con exito!', errorMessage: state.updateStatus.error });
+    const { state: { productSelected }, actions: { getProducts, selectProduct } } = useContext(FinanctialProductsContext);
+    const { actions, state } = useFinantialProductEdit({
+        productRepository,
+        initialForm: productSelected,
+        editSuccess: () => {
+            selectProduct(state.form);
+            getProducts();
+        }
+    });
+    useSnackbarReponse({
+        status: state.updateStatus.status,
+        success: {
+            message: 'Producto actualizado con exito!',
+            actionText: 'volver',
+            onActionPress: navigation.goBack
+        },
+        errorMessage: state.updateStatus.error
+    });
     return (
         <SafeAreaView edges={['bottom']} style={styles.container}>
             <KeyboardAwareScrollView>

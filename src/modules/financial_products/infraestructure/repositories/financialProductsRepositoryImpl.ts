@@ -23,6 +23,6 @@ export class FinancialProductsRepositoryImpl implements FinancialProductsReposit
         return this.productsApi.getByQuery(props.query).then((products) => products.map((product) => financialProductFromFinancialProductFromApi(product)));
     }
     verify(id: string): Promise<boolean> {
-        return this.verify(id);
+        return this.productsApi.verify(id);
     }
 }

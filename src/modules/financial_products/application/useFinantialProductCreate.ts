@@ -6,8 +6,10 @@ import { FinancialProductsRepository } from "../domain/repositories/financialPro
 type CreateFinantialProductStatus = 'initial' | 'loading' | 'successfully' | 'failure';
 export interface useFinantialProductCreateProps {
     productRepository: FinancialProductsRepository,
+    createSuccess?: () => void,
+    createFailed?: () => void,
 }
-export const useFinantialProductCreate = ({ productRepository }: useFinantialProductCreateProps) => {
+export const useFinantialProductCreate = ({ productRepository, createFailed, createSuccess }: useFinantialProductCreateProps) => {
 
     const [form, setForm] = useState<FinancialProductForm>(financialProductFormEmpty);
     const [errors, setErrors] = useState<FinancialProductFormErrors>(financialProductFormErrorsEmpty);
@@ -96,10 +98,24 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
         console.log("handleSubmit===>")
         const errors = getErrors();
         setErrors(errors);
-        if (!haveErrors(errors)) {
-            await createProduct();
-        }
+        if (haveErrors(errors)) return;
+        if (await verifyProduct()) return;
+        await createProduct();
 
+    }
+
+    const verifyProduct = async () => {
+        try {
+            setCreateStatus('loading')
+            const idAlreadyRegistered = await productRepository.verify(form.id);
+            if (idAlreadyRegistered) {
+                setErrors({ ...errors, id: 'ID ya existe!' });
+            }
+            return idAlreadyRegistered;
+        } finally {
+            setCreateStatus('initial');
+
+        }
     }
 
     const createProduct = async () => {
@@ -113,9 +129,15 @@ export const useFinantialProductCreate = ({ productRepository }: useFinantialPro
             }
             await productRepository.add(form);
             setCreateStatus('successfully');
+            if(createSuccess){
+                createSuccess();
+            }
         } catch (error) {
             console.log("createProduct error", error)
             setCreateStatus('failure');
+            if(createFailed){
+                createFailed();
+            }
         }
 
     }

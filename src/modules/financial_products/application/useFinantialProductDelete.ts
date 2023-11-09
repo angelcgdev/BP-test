@@ -6,9 +6,11 @@ type DeleteFinantialProductStatus = 'initial' | 'loading' | 'successfully' | 'fa
 type DeleteModalStatus = 'opened' | 'closed';
 export interface useFinantialProductDeleteProps {
     productRepository: FinancialProductsRepository,
-    product: FinancialProduct
+    product: FinancialProduct,
+    deleteSuccess?: () => void,
+    deleteFailed?: () => void,
 }
-export const useFinantialProductDelete = ({ productRepository, product }: useFinantialProductDeleteProps) => {
+export const useFinantialProductDelete = ({ productRepository, product, deleteFailed, deleteSuccess }: useFinantialProductDeleteProps) => {
     const [deleteStatus, setDeleteStatus] = useState<DeleteFinantialProductStatus>('initial');
     const [modalStatus, setModalStatus] = useState<DeleteModalStatus>('closed');
     const deleteProduct = async () => {
@@ -16,8 +18,14 @@ export const useFinantialProductDelete = ({ productRepository, product }: useFin
         try {
             await productRepository.delete(product.id);
             setDeleteStatus('successfully');
+            if (deleteSuccess) {
+                deleteSuccess();
+            }
         } catch (error) {
             setDeleteStatus('failure');
+            if (deleteFailed) {
+                deleteFailed();
+            }
         }
     }
     return {

@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useRef } from 'react';
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
@@ -8,6 +8,7 @@ import {
     View,
 } from 'react-native';
 import { useBPTheme } from './ThemeProvider';
+import { delay } from '../../../utils/delay';
 
 interface BPBottomModalSheetProps {
     onDismiss?: () => void;
@@ -21,16 +22,17 @@ export function BPBottomModalSheet(props: BPBottomModalSheetProps) {
     const { colors, padding, gap } = useBPTheme();
     const screenHeight = Dimensions.get('screen').height;
     const panY = useRef(new Animated.Value(screenHeight)).current;
-
+    const [overlayVisible, setOverlayVisible] = useState(false);
+    const animationDuration = 300;
     const resetPositionAnim = Animated.timing(panY, {
         toValue: 0,
-        duration: 500,
+        duration: animationDuration,
         useNativeDriver: true,
     });
 
     const closeAnim = Animated.timing(panY, {
         toValue: screenHeight,
-        duration: 500,
+        duration: animationDuration,
         useNativeDriver: true,
     });
 
@@ -42,30 +44,20 @@ export function BPBottomModalSheet(props: BPBottomModalSheetProps) {
     const handleDismiss = () => closeAnim.start(props.onDismiss);
 
     useEffect(() => {
-        resetPositionAnim.start();
-    }, [resetPositionAnim]);
-
-    const panResponders = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => false,
-            onPanResponderMove: Animated.event([null, { dy: panY }], {
-                useNativeDriver: false,
-            }),
-            onPanResponderRelease: (_, gs) => {
-                if (gs.dy > 0 && gs.vy > 2) {
-                    return handleDismiss();
-                }
-                return resetPositionAnim.start();
-            },
-        }),
-    ).current;
+        if (props.visible) {
+            setOverlayVisible(true);
+            resetPositionAnim.start();
+        } else {
+            closeAnim.start(() => {
+                setOverlayVisible(false);
+            });
+        }
+    }, [props.visible]);
 
     return (
         <Modal
-            animated
             animationType="fade"
-            visible={props.visible}
+            visible={overlayVisible}
             transparent
             onRequestClose={handleDismiss}>
             <View style={styles.overlay}>
@@ -74,7 +66,7 @@ export function BPBottomModalSheet(props: BPBottomModalSheetProps) {
                         ...styles.container,
                         transform: [{ translateY: translateY }],
                     }}
-                    {...panResponders.panHandlers}>
+                    >
                     <View style={[styles.header, { padding: padding.sm }]}>
                         {
                             (props.header)
